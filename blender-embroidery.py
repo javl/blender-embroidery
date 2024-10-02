@@ -4,14 +4,14 @@ import bpy  # importing late so we can run this script from VS code as well
 sys.path.append(
     "/home/javl/Documents/projects/blender-embroidery/venv/lib/python3.10/site-packages"
 )
-from pyembroidery import read_pes
+from pyembroidery import read
 
-# file_path = '/home/javl/Documents/projects/blender-embroidery/sample1.pes'
+file_path = "/home/javl/Documents/projects/blender-embroidery/sample1.pes"
 # file_path = "/home/javl/Documents/projects/blender-embroidery/logo_edited.pes"
-file_path = "/home/javl/Documents/projects/blender-embroidery/dogfre3_120.pes"
+# file_path = "/home/javl/Documents/projects/blender-embroidery/dogfre3_120.pes"
 # file_path = '/home/javl/Documents/projects/blender-embroidery/balletfree26_100.pes'
 # file_path = '/home/javl/Documents/projects/blender-embroidery/wpooho32_100.pes'
-pattern = read_pes(file_path)
+pattern = read(file_path)
 
 print(f"Number of stitches: {len(pattern.stitches)}")
 print(f"Number of threads: {len(pattern.threadlist)}")
@@ -35,6 +35,7 @@ END = 4
 COLOR_CHANGE = 5
 NEEDLE_SET = 9
 
+
 def draw_stitch(x1, y1, x2, y2):
     spline = curve_data.splines.new("NURBS")
     spline.points.add(4)
@@ -44,6 +45,7 @@ def draw_stitch(x1, y1, x2, y2):
     spline.points[3].co = (x2, y2, z_height, 1)
     spline.points[4].co = (x2, y2, 0, 1)
     spline.use_endpoint_u = True  # do this AFTER setting the points
+
 
 thread_index = 0
 sections = []
@@ -55,6 +57,7 @@ for stitch in pattern.stitches:
     c = int(stitch[2])
 
     if c == STITCH or c == JUMP:  # stitch
+        # section.setdefault("stitches", []).append([x, y])
         section["stitches"].append([x, y])
 
     elif c == COLOR_CHANGE:  # color change

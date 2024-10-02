@@ -1,0 +1,14 @@
+schema_version = "1.0.0"
+
+id = "blender-embroidery"
+name = "Embroidery Importer"
+version = "0.1.0"
+tagline = "Import embroidery files into Blender as curves"
+type = "add-on"
+blender_version_min = "4.2.0"
+maintainer = "Jasper van Loenen <mail@jaspervanloenen.com>"
+tags = ["Import-Export"]
+license = [
+  "SPDX:GPL-3.0-or-later",
+]
+repository = "https://github.com/javl/blender-embroidery"
