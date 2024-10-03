@@ -1,14 +1,23 @@
 schema_version = "1.0.0"
 
-id = "blender-embroidery"
+id = "embroidery_importer"
 name = "Embroidery Importer"
 version = "0.1.0"
-tagline = "Import embroidery files into Blender as curves"
+tagline = "Import embroidery files into Blender"
 type = "add-on"
 blender_version_min = "4.2.0"
 maintainer = "Jasper van Loenen <mail@jaspervanloenen.com>"
+website = "https://github.com/javl/embroidery_importer"
 tags = ["Import-Export"]
 license = [
   "SPDX:GPL-3.0-or-later",
 ]
-repository = "https://github.com/javl/blender-embroidery"
+repository = "https://github.com/javl/embroidery_importer"
+
+[permissions]
+files = "Read embroidery files from disk"
+
+# https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
+#wheels = [
+  # "./wheels/.whl",
+#]
