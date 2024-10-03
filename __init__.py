@@ -141,16 +141,16 @@ def create_line_depth_geometry_nodes():
     curve_to_mesh = depth_GN.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
     # Fill Caps
-    curve_to_mesh.inputs[2].default_value = False
+    curve_to_mesh.inputs[2].default_value = True
 
     # node Curve Circle
     curve_circle = depth_GN.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
     curve_circle.mode = "RADIUS"
-    # Resolution
-    curve_circle.inputs[0].default_value = 6
+    # 4n
+    curve_circle.inputs[0].default_value = 4
     # Radius
-    curve_circle.inputs[4].default_value = 0.00020000000949949026
+    curve_circle.inputs[4].default_value = 0.0002
 
     # Set locations
     group_input.location = (-360.0, 80.0)
@@ -172,18 +172,6 @@ def create_line_depth_geometry_nodes():
     # curve_circle.Curve -> curve_to_mesh.Profile Curve
     depth_GN.links.new(curve_circle.outputs[0], curve_to_mesh.inputs[1])
     return depth_GN
-
-
-def draw_stitch(curve_data, x1, y1, x2, y2):
-    """Draw a single stitch"""
-    spline = curve_data.splines.new("NURBS")
-    spline.points.add(4)
-    spline.points[0].co = (x1, y1, 0, 1)
-    spline.points[1].co = (x1, y1, z_height, 1)
-    spline.points[2].co = ((x2 + x1) / 2, (y2 + y1) / 2, z_height, 1)
-    spline.points[3].co = (x2, y2, z_height, 1)
-    spline.points[4].co = (x2, y2, 0, 1)
-    spline.use_endpoint_u = True  # do this AFTER setting the points
 
 
 def parse_embroidery_data(
@@ -297,6 +285,7 @@ def parse_embroidery_data(
 
         # for visibility we'll place each curve slightly above the previous one
         curve_obj.location.z = section_lift * index
+        # curve_obj.use_path = False
         # We'll use a custom property to store the thread number in the curve object, this wil lbe used by the material
         curve_obj["thread_index"] = section["thread_index"]
         if do_create_material:
@@ -305,6 +294,7 @@ def parse_embroidery_data(
             )  # apply our material to the curve object
 
         curve_data = curve_obj.data  # Get the curve data
+        curve_data.use_path = False
         curve_data.splines.clear()  # remove default spline
         if line_depth == "BEVEL":
             curve_data.use_fill_caps = True
@@ -319,19 +309,28 @@ def parse_embroidery_data(
             curve_obj.modifiers["Geometry Nodes"].node_group = GN
 
         # Go draw the actual stitches inside the current section
+        spline = curve_data.splines.new("NURBS")
+        point_index = 0
         for index, stitch in enumerate(section["stitches"]):
-            if (
-                index == 0
-            ):  # skip the first stitch in the section, as we don't have a previous point to connect it to
+            if index == 0:  # skip the first stitch in the section, as we don't have a previous point to connect it to
+                spline.points.add(1)
+                x = section["stitches"][index][0]
+                y = section["stitches"][index][1]
+                spline.points[point_index].co = (x, y, 0, 1)
+                spline.points[point_index + 1].co = (x, y, z_height, 1)
+                point_index += 2
                 continue
-            draw_stitch(
-                curve_data,
-                section["stitches"][index - 1][0],
-                section["stitches"][index - 1][1],
-                section["stitches"][index][0],
-                section["stitches"][index][1],
-            )
 
+            x = section["stitches"][index][0]
+            y = section["stitches"][index][1]
+
+            spline.points.add(2)
+            spline.points[point_index].co = (x, y, 0, 1)
+            spline.points[point_index + 1].co = (x, y, z_height, 1)
+
+            point_index += 2
+
+        spline.use_endpoint_u = True  # do this AFTER setting the points
         curve_obj.data = curve_data  # Update the curve object
 
     bpy.ops.object.mode_set(mode="OBJECT")
