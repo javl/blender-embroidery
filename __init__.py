@@ -1,21 +1,17 @@
 import sys
-import bpy  # importing late so we can run this script from VS code as well
+import bpy
 
-from bpy.types import Panel, Operator
+from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
 
 sys.path.append(
     "/home/javl/Documents/projects/blender-embroidery/venv/lib/python3.10/site-packages"
 )
 from pyembroidery import read
+
+# from pyembroidery import write_png, write_svg
 from math import floor
 from os import path
-
-# file_path = "/home/javl/Documents/projects/blender-embroidery/sample1.pes"
-file_path = "/home/javl/Documents/projects/blender-embroidery/logo_edited.pes"
-# file_path = "/home/javl/Documents/projects/blender-embroidery/dogfre3_120.pes"
-# file_path = '/home/javl/Documents/projects/blender-embroidery/balletfree26_100.pes'
-# file_path = '/home/javl/Documents/projects/blender-embroidery/wpooho32_100.pes'
 
 z_height = 0.0002
 scale = 10000.0
@@ -49,8 +45,7 @@ def create_material():
 
     nodes.clear()  # Clear existing nodes
 
-    # Nodes are created in the same order as they are linked in the node editor
-
+    # Nodes are created in the same order as how they are linked in the node editor
     # Add an Attribute node; we store the thread number in an attribute which this node retreives
     attribute_node = nodes.new(type="ShaderNodeAttribute")
     attribute_node.attribute_type = "OBJECT"
@@ -192,7 +187,13 @@ def draw_stitch(curve_data, x1, y1, x2, y2):
 
 
 def parse_embroidery_data(
-    context, filepath, show_jumpwires, do_create_material, line_depth, thread_thickness, create_collection
+    context,
+    filepath,
+    show_jumpwires,
+    do_create_material,
+    line_depth,
+    thread_thickness,
+    create_collection,
 ):
 
     filename = ""
@@ -203,6 +204,9 @@ def parse_embroidery_data(
     try:
         filename = path.basename(filepath)
         pattern = read(filepath)
+
+        # write_png(pattern, "/home/javl/test.png", {})
+        # write_svg(pattern, "/home/javl/test.svg", {})
     except Exception as e:
         report_message = "Error reading file"
         report_type = "ERROR"
@@ -278,7 +282,6 @@ def parse_embroidery_data(
     if do_create_material:
         material = create_material()  # create our material
 
-
     # Create a new collection
     if create_collection:
         collection = bpy.data.collections.new(filename)
@@ -317,8 +320,9 @@ def parse_embroidery_data(
 
         # Go draw the actual stitches inside the current section
         for index, stitch in enumerate(section["stitches"]):
-            if index == 0:
-                # skip the first stitch in the section, as we don't have a previous point to connect it to
+            if (
+                index == 0
+            ):  # skip the first stitch in the section, as we don't have a previous point to connect it to
                 continue
             draw_stitch(
                 curve_data,
@@ -329,46 +333,27 @@ def parse_embroidery_data(
             )
 
         curve_obj.data = curve_data  # Update the curve object
-        # collection.objects.link(curve_obj)  # add the curve object to the collection
 
     bpy.ops.object.mode_set(mode="OBJECT")
-
-    # create object if data was imported
-    # if (len(mesh.vertices) > 0):
-    #     create_object(mesh, object_name)
-    #     report_message = "Imported {num_values} lines from \"{file_name}\".".format(num_values=i, file_name=file_name)
-    # else:
-    #     report_message = "Import failed. Check if import options match CSV File!"
-    #     report_type = 'ERROR'
     if not do_create_material:
         report_message = f"Imported {len(pattern.stitches)} stitches"
-    else:
-        report_message = f"Imported {len(pattern.stitches)} stitches with {len(pattern.threadlist)} threads"
+        return report_message, report_type
 
-    # report_message = f"{report_message}\n{error_message}"
-
+    report_message = f"Imported {len(pattern.stitches)} stitches with {len(pattern.threadlist)} threads"
     return report_message, report_type
 
 
-# parse_pattern()
-
-
-# ImportHelper is a helper class, defines filename and invoke() function which calls the file selector.
 class ImportEmbroideryData(Operator, ImportHelper):
     """Import embroidery data"""
 
-    bl_idname = "import.embroidery"  # important since its how bpy.ops.import.spreadsheet is constructed
+    bl_idname = "import.embroidery"
     bl_label = "Import Embroidery"
 
-    # ImportHelper mixin class uses this
-    # filename_ext = ".json;.csv"
-
-    # List of operator properties, the attributes will be assigned
-    # to the class instance from the operator settings before calling.
     filter_glob: bpy.props.StringProperty(
+        # these are all types supported by pyembroidery
         default="*.pes;*.dst;*.exp;*.jef;*.vp3;*.10o;*.100;*.bro;*.dat;*.dsb;*.dsz;*.emd;*.exy;*.fxy;*.gt;*.hus;*.inb;*.jpx;*.ksm;*.max;*.mit;*.new;*.pcd;*.pcm;*.pcq;*.pcs;*.pec;*.phb;*.phc;*.sew;*.shv;*.stc;*.stx;*.tap;*.tbf;*.u01;*.xxx;*.zhs;*.zxy;*.gcode",
         options={"HIDDEN"},
-        maxlen=255,  # Max internal buffer length, longer would be clamped.
+        maxlen=255,
     )  # type: ignore
 
     import_scale: bpy.props.FloatProperty(
@@ -380,17 +365,10 @@ class ImportEmbroideryData(Operator, ImportHelper):
         options={"HIDDEN"},
     )  # type: ignore
 
-    # clip_start: bpy.props.BoolProperty(
-    #     name="Clip start to 0.001m",
-    #     description="Update the Clip Start value for better visibility of your embroidery up close",
-    #     default=False,
-    #     options={"HIDDEN"},
-    # )  # type: ignore
-
     thread_thickness: bpy.props.FloatProperty(
         name="Thread Thickness (mm)",
         description="Thickness of the thread in milimeters",
-        default=0.2,  # 0.0002
+        default=0.2,
         min=0.01,
         max=2.00,
         options={"HIDDEN"},
@@ -450,23 +428,7 @@ class ImportEmbroideryData(Operator, ImportHelper):
         row.prop(self, "thread_thickness", text="Thread Thickness (mm)")
 
     def execute(self, context):
-        # if(self.filepath.endswith('.json')):
-        #     report_message, report_type = read_json_data(context, self.filepath, self.array_name, self.data_fields, self.json_encoding)
-        # elif(self.filepath.endswith('.csv')):
-        #     report_message, report_type = read_csv_data(context, self.filepath, self.data_fields, self.csv_encoding, self.csv_delimiter, self.csv_leading_lines_to_discard)
         thread_thickness = self.thread_thickness / 1000.0
-
-        # if self.clip_start:
-        #     print("UPDATE CLIPSTART")
-        #     bpy.context.scene.clip_start = 0.001  # Set the clip start value to 0.001
-        #     for workspace in bpy.data.workspaces:
-        #         for screen in workspace.screens:
-        #             for area in [a for a in screen.areas if a.type == 'VIEW_3D']:
-        #                 for space in area.spaces:
-        #                     if space.type == 'VIEW_3D':
-        #                         space.clip_start = 0.001
-        # else:
-        #     print("NO UPDATE CLIPSTART")
 
         report_message, report_type = parse_embroidery_data(
             context,
@@ -482,42 +444,40 @@ class ImportEmbroideryData(Operator, ImportHelper):
         return {"FINISHED"}
 
 
-class EMBROIDERY_PT_import_options(bpy.types.Panel):
-    bl_space_type = "FILE_BROWSER"
-    bl_region_type = "TOOL_PROPS"
-    bl_label = "CSV Import Options"
-    bl_parent_id = "FILE_PT_operator"
+# class EMBROIDERY_PT_import_options(bpy.types.Panel):
+#     bl_space_type = "FILE_BROWSER"
+#     bl_region_type = "TOOL_PROPS"
+#     bl_label = "Embroidery Import Options"
+#     bl_parent_id = "FILE_PT_operator"
 
-    @classmethod
-    def poll(cls, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-        return (
-            operator.bl_idname == "IMPORT_OT_spreadsheet"
-            and operator.filepath.lower().endswith(".csv")
-        )
+#     @classmethod
+#     def poll(cls, context):
+#         sfile = context.space_data
+#         operator = sfile.active_operator
+#         return (
+#             operator.bl_idname == "IMPORT_OT_embroidery"
+#             and operator.filepath.lower().endswith(".pes")
+#         )
 
-    def draw(self, context):
-        sfile = context.space_data
-        operator = sfile.active_operator
-        layout = self.layout
-        layout.prop(data=operator, property="csv_delimiter")
-        layout.prop(data=operator, property="csv_leading_lines_to_discard")
-        layout.prop(data=operator, property="csv_encoding")
+#     def draw(self, context):
+#         sfile = context.space_data
+#         operator = sfile.active_operator
+#         layout = self.layout
+#         # layout.prop(data=operator, property="csv_delimiter")
+#         # layout.prop(data=operator, property="csv_leading_lines_to_discard")
+#         # layout.prop(data=operator, property="csv_encoding")
 
 
 classes = [
     ImportEmbroideryData,
-    EMBROIDERY_PT_import_options,
+    # EMBROIDERY_PT_import_options,
 ]
 
 
-# Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
     self.layout.operator(ImportEmbroideryData.bl_idname, text="Embroidery Import")
 
 
-# Register and add to the "file selector" menu (required to use F3 search "Text Import Operator" for quick access)
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
