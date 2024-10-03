@@ -105,73 +105,83 @@ def create_material():
 
 
 def create_line_depth_geometry_nodes():
-    depth_GN = bpy.data.node_groups.new(
-        type="GeometryNodeTree", name="ThreadGeometryNodes"
-    )
+    threadgeometrynodes = bpy.data.node_groups.new(type = 'GeometryNodeTree', name = "ThreadGeometryNodes")
 
-    # depth_GN.color_tag = 'NONE'
-    # depth_GN.description = ""
+    threadgeometrynodes.color_tag = 'NONE'
+    threadgeometrynodes.description = ""
 
-    depth_GN.is_modifier = True
+    threadgeometrynodes.is_modifier = True
 
-    # depth_GN interface
-    # Socket Geometry
-    geometry_socket = depth_GN.interface.new_socket(
-        name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
-    )
-    geometry_socket.attribute_domain = "POINT"
+    #threadgeometrynodes interface
+    #Socket Geometry
+    geometry_socket = threadgeometrynodes.interface.new_socket(name = "Geometry", in_out='OUTPUT', socket_type = 'NodeSocketGeometry')
+    geometry_socket.attribute_domain = 'POINT'
 
-    # Socket Geometry
-    geometry_socket_1 = depth_GN.interface.new_socket(
-        name="Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
-    )
-    geometry_socket_1.attribute_domain = "POINT"
+    #Socket Geometry
+    geometry_socket_1 = threadgeometrynodes.interface.new_socket(name = "Geometry", in_out='INPUT', socket_type = 'NodeSocketGeometry')
+    geometry_socket_1.attribute_domain = 'POINT'
 
-    # initialize depth_GN nodes
-    # node Group Input
-    group_input = depth_GN.nodes.new("NodeGroupInput")
+
+    #initialize threadgeometrynodes nodes
+    #node Group Input
+    group_input = threadgeometrynodes.nodes.new("NodeGroupInput")
     group_input.name = "Group Input"
 
-    # node Group Output
-    group_output = depth_GN.nodes.new("NodeGroupOutput")
+    #node Group Output
+    group_output = threadgeometrynodes.nodes.new("NodeGroupOutput")
     group_output.name = "Group Output"
     group_output.is_active_output = True
 
-    # node Curve to Mesh
-    curve_to_mesh = depth_GN.nodes.new("GeometryNodeCurveToMesh")
+    #node Curve to Mesh
+    curve_to_mesh = threadgeometrynodes.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
-    # Fill Caps
+    #Fill Caps
     curve_to_mesh.inputs[2].default_value = False
 
-    # node Curve Circle
-    curve_circle = depth_GN.nodes.new("GeometryNodeCurvePrimitiveCircle")
+    #node Curve Circle
+    curve_circle = threadgeometrynodes.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
-    curve_circle.mode = "RADIUS"
-    # Resolution
+    curve_circle.mode = 'RADIUS'
+    #Resolution
     curve_circle.inputs[0].default_value = 4
-    # Radius
+    #Radius
     curve_circle.inputs[4].default_value = 0.0002
 
-    # Set locations
+    #node Set Material
+    set_material = threadgeometrynodes.nodes.new("GeometryNodeSetMaterial")
+    set_material.name = "Set Material"
+    #Selection
+    set_material.inputs[1].default_value = True
+    if "ThreadMaterial" in bpy.data.materials:
+        set_material.inputs[2].default_value = bpy.data.materials["ThreadMaterial"]
+
+
+
+
+    #Set locations
     group_input.location = (-360.0, 80.0)
-    group_output.location = (60.0, 80.0)
+    group_output.location = (220.0, 80.0)
     curve_to_mesh.location = (-140.0, 80.0)
     curve_circle.location = (-360.0, -20.0)
+    set_material.location = (40.0, 80.0)
 
-    # Set dimensions
+    #Set dimensions
     group_input.width, group_input.height = 140.0, 100.0
     group_output.width, group_output.height = 140.0, 100.0
     curve_to_mesh.width, curve_to_mesh.height = 140.0, 100.0
     curve_circle.width, curve_circle.height = 140.0, 100.0
+    set_material.width, set_material.height = 140.0, 100.0
 
-    # initialize depth_GN links
-    # curve_to_mesh.Mesh -> group_output.Geometry
-    depth_GN.links.new(curve_to_mesh.outputs[0], group_output.inputs[0])
-    # group_input.Geometry -> curve_to_mesh.Curve
-    depth_GN.links.new(group_input.outputs[0], curve_to_mesh.inputs[0])
-    # curve_circle.Curve -> curve_to_mesh.Profile Curve
-    depth_GN.links.new(curve_circle.outputs[0], curve_to_mesh.inputs[1])
-    return depth_GN
+    #initialize threadgeometrynodes links
+    #group_input.Geometry -> curve_to_mesh.Curve
+    threadgeometrynodes.links.new(group_input.outputs[0], curve_to_mesh.inputs[0])
+    #curve_circle.Curve -> curve_to_mesh.Profile Curve
+    threadgeometrynodes.links.new(curve_circle.outputs[0], curve_to_mesh.inputs[1])
+    #set_material.Geometry -> group_output.Geometry
+    threadgeometrynodes.links.new(set_material.outputs[0], group_output.inputs[0])
+    #curve_to_mesh.Mesh -> set_material.Geometry
+    threadgeometrynodes.links.new(curve_to_mesh.outputs[0], set_material.inputs[0])
+    return threadgeometrynodes
 
 
 def draw_stitch(curve_data, x1, y1, x2, y2):
@@ -299,10 +309,8 @@ def parse_embroidery_data(
         curve_obj.location.z = section_lift * index
         # We'll use a custom property to store the thread number in the curve object, this wil lbe used by the material
         curve_obj["thread_index"] = section["thread_index"]
-        if do_create_material:
-            curve_obj.data.materials.append(
-                material
-            )  # apply our material to the curve object
+        if do_create_material and line_depth != "GEOMETRY_NODES":  # don't aply the material if we're using geometry nodes
+            curve_obj.data.materials.append( material )  # apply our material to the curve object
 
         curve_data = curve_obj.data  # Get the curve data
         curve_data.splines.clear()  # remove default spline
