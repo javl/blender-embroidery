@@ -148,9 +148,9 @@ def create_line_depth_geometry_nodes():
     curve_circle.name = "Curve Circle"
     curve_circle.mode = "RADIUS"
     # Resolution
-    curve_circle.inputs[0].default_value = 6
+    curve_circle.inputs[0].default_value = 4
     # Radius
-    curve_circle.inputs[4].default_value = 0.00020000000949949026
+    curve_circle.inputs[4].default_value = 0.0002
 
     # Set locations
     group_input.location = (-360.0, 80.0)
