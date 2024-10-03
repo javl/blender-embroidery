@@ -313,6 +313,7 @@ def parse_embroidery_data(
             curve_obj.data.materials.append( material )  # apply our material to the curve object
 
         curve_data = curve_obj.data  # Get the curve data
+        curve_data.use_path = False
         curve_data.splines.clear()  # remove default spline
         if line_depth == "BEVEL":
             curve_data.use_fill_caps = True
