@@ -5,21 +5,13 @@ sys.path.append(
     "/home/javl/Documents/projects/blender-embroidery/venv/lib/python3.10/site-packages"
 )
 from pyembroidery import read
+from math import floor
 
-file_path = "/home/javl/Documents/projects/blender-embroidery/sample1.pes"
-# file_path = "/home/javl/Documents/projects/blender-embroidery/logo_edited.pes"
+# file_path = "/home/javl/Documents/projects/blender-embroidery/sample1.pes"
+file_path = "/home/javl/Documents/projects/blender-embroidery/logo_edited.pes"
 # file_path = "/home/javl/Documents/projects/blender-embroidery/dogfre3_120.pes"
 # file_path = '/home/javl/Documents/projects/blender-embroidery/balletfree26_100.pes'
 # file_path = '/home/javl/Documents/projects/blender-embroidery/wpooho32_100.pes'
-pattern = read(file_path)
-
-print(f"Number of stitches: {len(pattern.stitches)}")
-print(f"Number of threads: {len(pattern.threadlist)}")
-
-thread_colors = [
-    [thread.get_red() / 255.0, thread.get_green() / 255.0, thread.get_blue() / 255.0]
-    for thread in pattern.threadlist
-]
 
 z_height = 0.0002
 scale = 10000.0
@@ -34,6 +26,10 @@ STOP = 3
 END = 4
 COLOR_CHANGE = 5
 NEEDLE_SET = 9
+
+show_jumpwires = True
+def truncate(f, n):
+    return floor(f * 10 ** n) / 10 ** n
 
 def create_material():
     """ Creates a material with a color ramp based on the thread colors
@@ -52,15 +48,20 @@ def create_material():
     # Add an Attribute node; we store the thread number in an attribute which this node retreives
     attribute_node = nodes.new(type="ShaderNodeAttribute")
     attribute_node.attribute_type = "OBJECT"
-    attribute_node.attribute_name = ( "thread_number" )
-    attribute_node.location = (-700, 0)
+    attribute_node.attribute_name = ( "thread_index" )
+    attribute_node.location = (-900, 0)
 
     # Add a Math node; we will use this to divide the thread number by the number of thread colors to
     # find it's position in the color ramp
-    math_node = nodes.new(type="ShaderNodeMath")
-    math_node.operation = "DIVIDE"
-    math_node.inputs[1].default_value = len(thread_colors)  # Set the multiplier value
-    math_node.location = (-500, 0)
+    math_node_divide = nodes.new(type="ShaderNodeMath")
+    math_node_divide.operation = "DIVIDE"
+    math_node_divide.inputs[1].default_value = len(thread_colors)  # Set the multiplier value
+    math_node_divide.location = (-700, 0)
+
+    math_node_add = nodes.new(type="ShaderNodeMath")
+    math_node_add.operation = "ADD"
+    math_node_add.inputs[0].default_value = 0.01  # Set the multiplier value
+    math_node_add.location = (-500, 0)
 
     # Add a Color ramp node; this has a color for each of our threads
     color_ramp_node = nodes.new(type="ShaderNodeValToRGB")
@@ -68,8 +69,9 @@ def create_material():
     color_ramp_node.color_ramp.interpolation = "CONSTANT"
     for index, color in enumerate(thread_colors):
         print(color)
+        # use truncate to avoid floating point errors
         color_stop = color_ramp_node.color_ramp.elements.new(
-            1.0 / len(thread_colors) * index
+            truncate(1.0 / len(thread_colors) * index, 3)
         )
         color_stop.color = (color[0], color[1], color[2], 1.0)
 
@@ -86,9 +88,11 @@ def create_material():
     output_node.location = (300, 0)
 
     # Connect the Attribute node to the Math node
-    links.new(attribute_node.outputs["Fac"], math_node.inputs[0])
+    links.new(attribute_node.outputs["Fac"], math_node_divide.inputs[0])
     # Connect the Math node to the Color Ramp node
-    links.new(math_node.outputs["Value"], color_ramp_node.inputs["Fac"])
+    links.new(math_node_divide.outputs["Value"], math_node_add.inputs[1])
+    # Connect the Math node to the Color Ramp node
+    links.new(math_node_add.outputs["Value"], color_ramp_node.inputs["Fac"])
     # Connect the Color Ramp node to the Base Color input of the Principled BSDF node
     links.new(color_ramp_node.outputs["Color"], bsdf_node.inputs["Base Color"])
     # Connect the Principled BSDF node to the Output node
@@ -108,36 +112,62 @@ def draw_stitch(curve_data, x1, y1, x2, y2):
     spline.use_endpoint_u = True  # do this AFTER setting the points
 
 def parse_pattern():
+    pattern = read(file_path)
+
+    print(f"Number of stitches: {len(pattern.stitches)}")
+    print(f"Number of threads: {len(pattern.threadlist)}")
+
+    global thread_colors
+    thread_colors = [
+        [thread.get_red() / 255.0, thread.get_green() / 255.0, thread.get_blue() / 255.0]
+        for thread in pattern.threadlist
+    ]
+    print(thread_colors)
+    for index, thread in enumerate(pattern.threadlist):
+        print(index, thread)
+
     thread_index = 0  # start at the first thread
     sections = [] # list of sections, each section is a list of stitches
-    section = {"thread_index": thread_index, "stitches": []}
+    section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
 
     for stitch in pattern.stitches:
         x = float(stitch[0]) / scale
         y = -float(stitch[1]) / scale
         c = int(stitch[2])
+        print(x, y, c)
 
-        if c == STITCH or c == JUMP:  # stitch and jump both draw a thread
+        if c == STITCH:  # stitch and jump both draw a thread
             section["stitches"].append([x, y])
+
+        elif c == JUMP:
+            if show_jumpwires:
+                section["stitches"].append([x, y])
+            else:
+                print("skip jump")
+                sections.append(section)  # end our previous section
+                section = {"thread_index": thread_index, "stitches": [], "is_jump": True}
+            # sections.append(section)  # end our previous section
+            # section = {"thread_index": thread_index, "stitches": [], "is_jump": True}
+            # section["stitches"].append([x, y])
 
         elif c == COLOR_CHANGE:  # color change, move to the next thread
             sections.append(section)  # end our previous section
             thread_index += 1
-            section = {"thread_index": thread_index, "stitches": []}
+            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
 
         elif c == TRIM:  # trim moves to the next section without a line between the old and new position
             sections.append(section)  # end our previous section
-            section = {"thread_index": thread_index, "stitches": []}
+            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
             section["stitches"].append([x, y])
 
         elif c == END:  # end of a section?
             sections.append(section)
-            section = {"thread_index": thread_index, "stitches": []}
+            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
 
         else: # unhandled/unknown commands
             print("Unknown command: ", c)
             sections.append(section)  # end our previous section
-            section = {"thread_index": thread_index, "stitches": []}
+            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
             section["stitches"].append([x, y])
 
     material = create_material()  # create our material
@@ -149,7 +179,7 @@ def parse_pattern():
         # for visibility we'll place each curve slightly above the previous one
         curve_obj.location.z = section_lift * index
         # We'll use a custom property to store the thread number in the curve object, this wil lbe used by the material
-        curve_obj["thread_number"] = section["thread_index"]
+        curve_obj["thread_index"] = section["thread_index"]
         curve_obj.data.materials.append(material)  # apply our material to the curve object
 
         curve_data = curve_obj.data  # Get the curve data
