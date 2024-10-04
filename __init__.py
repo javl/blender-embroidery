@@ -296,6 +296,7 @@ def parse_embroidery_data(
         curve_data = curve_obj.data  # Get the curve data
         curve_data.use_path = False
         curve_data.splines.clear()  # remove default spline
+        curve_data.resolution_u = 4
         if line_depth == "BEVEL":
             curve_data.use_fill_caps = True
             curve_data.bevel_depth = thread_thickness
