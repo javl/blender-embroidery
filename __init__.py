@@ -151,9 +151,6 @@ def create_line_depth_geometry_nodes():
     if "ThreadMaterial" in bpy.data.materials:
         set_material.inputs[2].default_value = bpy.data.materials["ThreadMaterial"]
 
-
-
-
     #Set locations
     group_input.location = (-360.0, 80.0)
     group_output.location = (220.0, 80.0)
@@ -380,7 +377,7 @@ class ImportEmbroideryData(Operator, ImportHelper):
     )  # type: ignore
 
     show_jump_wires: bpy.props.BoolProperty(
-        name="Show jump wires",
+        name="Import jump wires",
         description="Include or exclude jump wires from the design",
         default=True,
         options={"HIDDEN"},
