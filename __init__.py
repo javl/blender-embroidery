@@ -270,7 +270,7 @@ def parse_embroidery_data(
         ):  # trim moves to the next section without a line between the old and new position
             sections.append(section)  # end our previous section
             section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
-            section["stitches"].append([x, y])
+            # section["stitches"].append([x, y])
 
         elif c == END:  # end of a section?
             sections.append(section)
