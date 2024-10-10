@@ -3,10 +3,6 @@ import bpy
 
 from bpy.types import Operator
 from bpy_extras.io_utils import ImportHelper
-
-sys.path.append(
-    "/home/javl/Documents/projects/blender-embroidery/venv/lib/python3.10/site-packages"
-)
 from pyembroidery import read
 
 # from pyembroidery import write_png, write_svg

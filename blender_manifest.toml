@@ -14,10 +14,10 @@ license = [
 ]
 repository = "https://github.com/javl/embroidery_importer"
 
+# https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
+wheels = [
+   "./wheels/pyembroidery-1.5.1-py2.py3-none-any.whl"
+]
+
 [permissions]
 files = "Read embroidery files from disk"
-
-# https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
-#wheels = [
-  # "./wheels/.whl",
-#]
