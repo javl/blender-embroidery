@@ -1,7 +1,7 @@
 ![Blender Embroidery Header image](images/blender_embroidery.png)
 # Blender Embroidery Import
 
-This is a Blender add-on that allows you to import files to be used with embroidery machines to visualize them.
+This is a Blender add-on that allows you to import files to be used with embroidery machines as curves (with optional thickness).
 
 ## License
 This addon is free to use (see [license](LICENSE)), including commercially, but if you find it useful please consider supporting my free and open source projects:
