@@ -12,7 +12,7 @@ tags = ["Import-Export"]
 license = [
   "SPDX:GPL-3.0-or-later",
 ]
-repository = "https://github.com/javl/embroidery_importer"
+repository = "https://github.com/javl/blender-embroidery"
 
 # https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
 wheels = [
