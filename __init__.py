@@ -100,7 +100,7 @@ def create_material():
     return material
 
 
-def create_line_depth_geometry_nodes():
+def create_line_depth_geometry_nodes(_material):
     threadgeometrynodes = bpy.data.node_groups.new(type = 'GeometryNodeTree', name = "ThreadGeometryNodes")
 
     threadgeometrynodes.color_tag = 'NONE'
@@ -148,8 +148,8 @@ def create_line_depth_geometry_nodes():
     set_material.name = "Set Material"
     #Selection
     set_material.inputs[1].default_value = True
-    if "ThreadMaterial" in bpy.data.materials:
-        set_material.inputs[2].default_value = bpy.data.materials["ThreadMaterial"]
+    if _material.name in bpy.data.materials:
+        set_material.inputs[2].default_value = bpy.data.materials[_material.name]
 
     #Set locations
     group_input.location = (-360.0, 80.0)
@@ -208,6 +208,14 @@ def parse_embroidery_data(
         filename = path.basename(filepath)
         pattern = read(filepath)
 
+        # for thread in pattern.threadlist:
+        #     print(thread)
+        #     print('hexcolor: ', thread.hex_color())
+        #     print (thread.get_red() / 255.0, thread.get_green() / 255.0, thread.get_blue() / 255.0)
+        #     print(thread.get_opaque_color())
+        #     # print(dir(thread))
+
+
         # write_png(pattern, "/home/javl/test.png", {})
         # write_svg(pattern, "/home/javl/test.svg", {})
     except Exception as e:
@@ -264,6 +272,7 @@ def parse_embroidery_data(
             sections.append(section)  # end our previous section
             thread_index += 1
             section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
+            # break
 
         elif (
             c == TRIM
@@ -313,10 +322,7 @@ def parse_embroidery_data(
             curve_data.bevel_depth = thread_thickness
             curve_data.bevel_resolution = 4
         elif line_depth == "GEOMETRY_NODES":
-            if "ThreadGeometryNodes" in bpy.data.node_groups:
-                GN = bpy.data.node_groups["ThreadGeometryNodes"]
-            else:
-                GN = create_line_depth_geometry_nodes()
+            GN = create_line_depth_geometry_nodes(material)
             curve_obj.modifiers.new("Geometry Nodes", "NODES")
             curve_obj.modifiers["Geometry Nodes"].node_group = GN
 
