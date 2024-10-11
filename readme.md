@@ -13,10 +13,12 @@ This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroider
 
 Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
 
+## Example file
+The pattern shown at the top of this page can be found here: [example.pes](example.pes).
+
 ## Table of contents
 - [Blender Embroidery Import](#blender-embroidery-import)
   - [Installation](#installation)
-  - [Example](#example)
   - [Import settings](#import-settings)
     - [Import jump wires](#import-jump-wires)
     - [Create material](#create-material)
@@ -34,9 +36,6 @@ Download the [latest release](https://github.com/javl/blender-embroidery/release
 After installation you can find the importer in the file menu under `File > Import > Embroidery Import`.
 
 ![Location of the import button](images/menu_option.png)
-
-## Example
-The pattern shown at the top of this page can be found in this repository as [example.pes](example.pes).
 
 ## Import settings
 In the import dialog there are a few settings you can adjust:
