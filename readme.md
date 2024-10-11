@@ -1,7 +1,7 @@
 ![Blender Embroidery Header image](images/blender_embroidery.png)
 # Blender Embroidery Import
 
-This is a Blender add-on that allows you to import embroidery files (files to be used with embroidery machines) into Blender.
+This is a Blender add-on that allows you to import files to be used with embroidery machines into Blender to visualize them.
 
 This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library (you can find the whole list in the [pyembroidery documentation](https://pypi.org/project/pyembroidery/)). Personally I've only tested it with `.pes` files.
 
