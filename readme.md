@@ -9,7 +9,9 @@ This addon is free to use (see [license](LICENSE)), including commercially, but 
 [![GitHub Sponsor](https://img.shields.io/github/sponsors/javl?label=Sponsor&logo=GitHub)](https://github.com/sponsors/javl)
 
 ## Credit and supported file types
-This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library (you can find the whole list in the [pyembroidery documentation](https://pypi.org/project/pyembroidery/)). Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
+This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library (you can find the whole list in the pyembroidery [documentation](https://pypi.org/project/pyembroidery/)). 
+
+Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
 
 ## Table of contents
 - [Blender Embroidery Import](#blender-embroidery-import)
