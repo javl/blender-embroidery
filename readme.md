@@ -1,11 +1,17 @@
 ![Blender Embroidery Header image](images/blender_embroidery.png)
 # Blender Embroidery Import
 
-This is a Blender add-on that allows you to import files to be used with embroidery machines into Blender to visualize them.
+This is a Blender add-on that allows you to import files to be used with embroidery machines to visualize them.
 
+## License
+This addon is free to use (see [license](LICENSE)), including commercially, but if you find it useful please consider supporting my free and open source projects:
+
+[![GitHub Sponsor](https://img.shields.io/github/sponsors/javl?label=Sponsor&logo=GitHub)](https://github.com/sponsors/javl)
+
+## Credit and supported file types
 This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library (you can find the whole list in the [pyembroidery documentation](https://pypi.org/project/pyembroidery/)). Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
 
-Table of contents:
+## Table of contents
 - [Blender Embroidery Import](#blender-embroidery-import)
   - [Installation](#installation)
   - [Example](#example)
@@ -21,7 +27,7 @@ Table of contents:
   - [Info on the material and color](#info-on-the-material-and-color)
 
 ## Installation
-Download the latest release as a `.zip` file and add it via Blender's add-on manager.
+Download the [latest release](https://github.com/javl/blender-embroidery/releases/latest) as a `.zip` file and add it via Blender's add-on manager.
 
 After installation you can find the importer in the file menu under `File > Import > Embroidery Import`.
 
