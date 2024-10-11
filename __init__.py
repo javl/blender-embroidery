@@ -100,8 +100,12 @@ def create_material():
     return material
 
 
-def create_line_depth_geometry_nodes(_material):
-    threadgeometrynodes = bpy.data.node_groups.new(type = 'GeometryNodeTree', name = "ThreadGeometryNodes")
+def create_line_depth_geometry_nodes(filename, material):
+    nodeName = f'{filename}_GN'
+    if nodeName not in bpy.data.node_groups:
+        threadgeometrynodes = bpy.data.node_groups.new(type='GeometryNodeTree', name=nodeName)
+    else:
+        threadgeometrynodes = bpy.data.node_groups[nodeName]
 
     threadgeometrynodes.color_tag = 'NONE'
     threadgeometrynodes.description = ""
@@ -148,8 +152,8 @@ def create_line_depth_geometry_nodes(_material):
     set_material.name = "Set Material"
     #Selection
     set_material.inputs[1].default_value = True
-    if _material.name in bpy.data.materials:
-        set_material.inputs[2].default_value = bpy.data.materials[_material.name]
+    if material.name in bpy.data.materials:
+        set_material.inputs[2].default_value = bpy.data.materials[material.name]
 
     #Set locations
     group_input.location = (-360.0, 80.0)
