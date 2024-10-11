@@ -7,7 +7,7 @@ tagline = "Import embroidery files into Blender"
 type = "add-on"
 blender_version_min = "4.2.0"
 maintainer = "Jasper van Loenen <mail@jaspervanloenen.com>"
-website = "https://github.com/javl/embroidery_importer"
+website = "https://github.com/javl/blender-embroidery"
 tags = ["Import-Export"]
 license = [
   "SPDX:GPL-3.0-or-later",
