@@ -49,7 +49,7 @@ Wether to include jump wires in the imported object. Jump wires are lines that t
 With this selected a material will be created for the imported object. This material will reflect the colors of the threads used in the embroidery file.
 
 ### Create collection
-With this enabeld all generated curves for your import will be place in a single collection.
+With this enabled all generated curves for your import will be place in a single collection.
 
 ### Thickness type
 There are three options here:
