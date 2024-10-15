@@ -326,7 +326,7 @@ def parse_embroidery_data(
             curve_data.bevel_depth = thread_thickness
             curve_data.bevel_resolution = 4
         elif line_depth == "GEOMETRY_NODES":
-            GN = create_line_depth_geometry_nodes(material)
+            GN = create_line_depth_geometry_nodes(filename, material)
             curve_obj.modifiers.new("Geometry Nodes", "NODES")
             curve_obj.modifiers["Geometry Nodes"].node_group = GN
 
