@@ -14,7 +14,7 @@ This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroider
 Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
 
 ## Example file
-The pattern shown at the top of this page can be found here: [example.pes](example.pes).
+The pattern shown at the top of this page can be found here: [example.pes](example.pes). The original `.svg` file is [here](example.svg), open it in Inkscape with the Ink/Stitch addon installed.
 
 ## Table of contents
 - [Blender Embroidery Import](#blender-embroidery-import)
