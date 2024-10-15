@@ -43,13 +43,13 @@ In the import dialog there are a few settings you can adjust:
 ![Image showing import settings](images/import_settings.png)
 
 ### Import jump wires
-Wether to include jump wires in the imported object. Jump wires are lines that the machine creates when jumping to the next part of your pattern and which you normally remove manually. Not importing them leads to a cleaner look, but will not completely accurate to the original pattern.
+Whether to include jump wires in the imported object. Jump wires are lines that the machine creates when jumping to the next part of your pattern and which you normally remove manually. Not importing them leads to a cleaner look, but will not completely accurate to the original pattern.
 
 ### Create material
 With this selected a material will be created for the imported object. This material will reflect the colors of the threads used in the embroidery file.
 
 ### Create collection
-With this enabeld all generated curves for your import will be place in a single collection.
+With this enabled all generated curves for your import will be place in a single collection.
 
 ### Thickness type
 There are three options here:
