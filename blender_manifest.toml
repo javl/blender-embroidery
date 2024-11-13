@@ -2,7 +2,7 @@ schema_version = "1.0.0"
 
 id = "embroidery_importer"
 name = "Embroidery Importer"
-version = "0.9.1"
+version = "0.9.3"
 tagline = "Import embroidery files into Blender"
 type = "add-on"
 blender_version_min = "4.2.0"

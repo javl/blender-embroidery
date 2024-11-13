@@ -358,7 +358,7 @@ def parse_embroidery_data(
 class ImportEmbroideryData(Operator, ImportHelper):
     """Import embroidery data"""
 
-    bl_idname = "import.embroidery"
+    bl_idname = "import_scene.embroidery"
     bl_label = "Import Embroidery"
 
     filter_glob: bpy.props.StringProperty(
