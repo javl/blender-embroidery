@@ -101,17 +101,13 @@ def create_material():
 
 
 def create_line_depth_geometry_nodes(filename, material):
-    nodeName = f"{filename}_GN"
-    if nodeName not in bpy.data.node_groups:
-        threadgeometrynodes = bpy.data.node_groups.new(
-            type="GeometryNodeTree", name=nodeName
-        )
-    else:
-        threadgeometrynodes = bpy.data.node_groups[nodeName]
+    nodeName = f"{filename}_embroidery_GN"
+    if nodeName in bpy.data.node_groups:
+        return bpy.data.node_groups[nodeName]
 
+    threadgeometrynodes = bpy.data.node_groups.new(type="GeometryNodeTree", name=nodeName)
     threadgeometrynodes.color_tag = "NONE"
     threadgeometrynodes.description = ""
-
     threadgeometrynodes.is_modifier = True
 
     # threadgeometrynodes interface
