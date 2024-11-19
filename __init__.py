@@ -67,7 +67,6 @@ def create_material():
     color_ramp_node.location = (-300, 0)
     color_ramp_node.color_ramp.interpolation = "CONSTANT"
     for index, color in enumerate(thread_colors):
-        # print(color)
         # use truncate to avoid floating point errors
         color_stop = color_ramp_node.color_ramp.elements.new(
             truncate(1.0 / len(thread_colors) * index, 3)
@@ -105,7 +104,9 @@ def create_line_depth_geometry_nodes(filename, material):
     if nodeName in bpy.data.node_groups:
         return bpy.data.node_groups[nodeName]
 
-    threadgeometrynodes = bpy.data.node_groups.new(type="GeometryNodeTree", name=nodeName)
+    threadgeometrynodes = bpy.data.node_groups.new(
+        type="GeometryNodeTree", name=nodeName
+    )
     threadgeometrynodes.color_tag = "NONE"
     threadgeometrynodes.description = ""
     threadgeometrynodes.is_modifier = True
@@ -116,7 +117,6 @@ def create_line_depth_geometry_nodes(filename, material):
         name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
     )
     geometry_socket.attribute_domain = "POINT"
-
     # Socket Geometry
     geometry_socket_1 = threadgeometrynodes.interface.new_socket(
         name="Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
@@ -138,7 +138,6 @@ def create_line_depth_geometry_nodes(filename, material):
     curve_to_mesh.name = "Curve to Mesh"
     # Fill Caps
     curve_to_mesh.inputs[2].default_value = False
-
     # node Curve Circle
     curve_circle = threadgeometrynodes.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
@@ -155,7 +154,6 @@ def create_line_depth_geometry_nodes(filename, material):
     set_material.inputs[1].default_value = True
     if material.name in bpy.data.materials:
         set_material.inputs[2].default_value = bpy.data.materials[material.name]
-
     # Set locations
     group_input.location = (-360.0, 80.0)
     group_output.location = (220.0, 80.0)
@@ -169,7 +167,6 @@ def create_line_depth_geometry_nodes(filename, material):
     curve_to_mesh.width, curve_to_mesh.height = 140.0, 100.0
     curve_circle.width, curve_circle.height = 140.0, 100.0
     set_material.width, set_material.height = 140.0, 100.0
-
     # initialize threadgeometrynodes links
     # group_input.Geometry -> curve_to_mesh.Curve
     threadgeometrynodes.links.new(group_input.outputs[0], curve_to_mesh.inputs[0])
@@ -258,21 +255,19 @@ def parse_embroidery_data(
             sections.append(section)  # end our previous section
             thread_index += 1
             section = {"thread_index": thread_index, "stitches": []}
-            # break
 
         elif (
             c == TRIM
         ):  # trim moves to the next section without a line between the old and new position
             sections.append(section)  # end our previous section
             section = {"thread_index": thread_index, "stitches": []}
-            # section["stitches"].append([x, y])
 
         elif c == END:  # end of a section?
             sections.append(section)
             section = {"thread_index": thread_index, "stitches": []}
 
         else:  # unhandled/unknown commands
-            print("Unknown command: ", c)
+            print("[Embroidery Importer] Unknown command: ", c)
             sections.append(section)  # end our previous section
             section = {"thread_index": thread_index, "stitches": []}
             section["stitches"].append([x, y])
@@ -288,21 +283,20 @@ def parse_embroidery_data(
             bpy.context.view_layer.layer_collection.children[collection.name]
         )
 
-    for index, section in enumerate(sections):  # go draw each of the sections
-
+    for section_index, section in enumerate(sections):  # go draw each of the sections
+        # print(f"at section {section_index+1} of {len(sections)}")
         bpy.ops.curve.primitive_nurbs_path_add()  # create a new curve
         curve_obj = bpy.context.object  # get the new curve object
 
         # for visibility we'll place each curve slightly above the previous one
-        curve_obj.location.z = section_lift * index
+        curve_obj.location.z = section_lift * section_index
         # We'll use a custom property to store the thread number in the curve object, this wil lbe used by the material
         curve_obj["thread_index"] = section["thread_index"]
-        if (
-            do_create_material and line_depth != "GEOMETRY_NODES"
-        ):  # don't aply the material if we're using geometry nodes
-            curve_obj.data.materials.append(
-                material
-            )  # apply our material to the curve object
+
+        # don't aply the material if we're using geometry nodes
+        if do_create_material and line_depth != "GEOMETRY_NODES":
+            # apply our material to the curve object
+            curve_obj.data.materials.append(material)
 
         curve_data = curve_obj.data  # Get the curve data
         curve_data.use_path = False
@@ -317,17 +311,16 @@ def parse_embroidery_data(
             curve_obj.modifiers["Geometry Nodes"].node_group = GN
 
         # Go draw the actual stitches inside the current section
-        for index, stitch in enumerate(section["stitches"]):
-            if (
-                index == 0
-            ):  # skip the first stitch in the section, as we don't have a previous point to connect it to
+        for stitch_index, stitch in enumerate(section["stitches"]):
+            if stitch_index == 0:
+                # skip the first stitch in the section, as we don't have a previous point to connect it to
                 continue
             draw_stitch(
                 curve_data,
-                section["stitches"][index - 1][0],
-                section["stitches"][index - 1][1],
-                section["stitches"][index][0],
-                section["stitches"][index][1],
+                section["stitches"][stitch_index - 1][0],
+                section["stitches"][stitch_index - 1][1],
+                section["stitches"][stitch_index][0],
+                section["stitches"][stitch_index][1],
             )
 
         curve_obj.data = curve_data  # Update the curve object
@@ -415,7 +408,6 @@ class ImportEmbroideryData(Operator, ImportHelper):
         layout.prop(self, "show_jump_wires")
         layout.prop(self, "do_create_material")
         layout.prop(self, "create_collection")
-        # layout.prop(self, "clip_start")
 
         col = layout.column(align=True)
         col.label(text="Thickness type:")
