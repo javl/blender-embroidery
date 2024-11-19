@@ -67,7 +67,7 @@ def create_material():
     color_ramp_node.location = (-300, 0)
     color_ramp_node.color_ramp.interpolation = "CONSTANT"
     for index, color in enumerate(thread_colors):
-        print(color)
+        # print(color)
         # use truncate to avoid floating point errors
         color_stop = color_ramp_node.color_ramp.elements.new(
             truncate(1.0 / len(thread_colors) * index, 3)
