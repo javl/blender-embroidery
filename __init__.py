@@ -101,82 +101,87 @@ def create_material():
 
 
 def create_line_depth_geometry_nodes(filename, material):
-    nodeName = f'{filename}_GN'
+    nodeName = f"{filename}_GN"
     if nodeName not in bpy.data.node_groups:
-        threadgeometrynodes = bpy.data.node_groups.new(type='GeometryNodeTree', name=nodeName)
+        threadgeometrynodes = bpy.data.node_groups.new(
+            type="GeometryNodeTree", name=nodeName
+        )
     else:
         threadgeometrynodes = bpy.data.node_groups[nodeName]
 
-    threadgeometrynodes.color_tag = 'NONE'
+    threadgeometrynodes.color_tag = "NONE"
     threadgeometrynodes.description = ""
 
     threadgeometrynodes.is_modifier = True
 
-    #threadgeometrynodes interface
-    #Socket Geometry
-    geometry_socket = threadgeometrynodes.interface.new_socket(name = "Geometry", in_out='OUTPUT', socket_type = 'NodeSocketGeometry')
-    geometry_socket.attribute_domain = 'POINT'
+    # threadgeometrynodes interface
+    # Socket Geometry
+    geometry_socket = threadgeometrynodes.interface.new_socket(
+        name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+    )
+    geometry_socket.attribute_domain = "POINT"
 
-    #Socket Geometry
-    geometry_socket_1 = threadgeometrynodes.interface.new_socket(name = "Geometry", in_out='INPUT', socket_type = 'NodeSocketGeometry')
-    geometry_socket_1.attribute_domain = 'POINT'
+    # Socket Geometry
+    geometry_socket_1 = threadgeometrynodes.interface.new_socket(
+        name="Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+    )
+    geometry_socket_1.attribute_domain = "POINT"
 
-
-    #initialize threadgeometrynodes nodes
-    #node Group Input
+    # initialize threadgeometrynodes nodes
+    # node Group Input
     group_input = threadgeometrynodes.nodes.new("NodeGroupInput")
     group_input.name = "Group Input"
 
-    #node Group Output
+    # node Group Output
     group_output = threadgeometrynodes.nodes.new("NodeGroupOutput")
     group_output.name = "Group Output"
     group_output.is_active_output = True
 
-    #node Curve to Mesh
+    # node Curve to Mesh
     curve_to_mesh = threadgeometrynodes.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
-    #Fill Caps
+    # Fill Caps
     curve_to_mesh.inputs[2].default_value = False
 
-    #node Curve Circle
+    # node Curve Circle
     curve_circle = threadgeometrynodes.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
-    curve_circle.mode = 'RADIUS'
-    #Resolution
+    curve_circle.mode = "RADIUS"
+    # Resolution
     curve_circle.inputs[0].default_value = 4
-    #Radius
+    # Radius
     curve_circle.inputs[4].default_value = 0.0002
 
-    #node Set Material
+    # node Set Material
     set_material = threadgeometrynodes.nodes.new("GeometryNodeSetMaterial")
     set_material.name = "Set Material"
-    #Selection
+    # Selection
     set_material.inputs[1].default_value = True
     if material.name in bpy.data.materials:
         set_material.inputs[2].default_value = bpy.data.materials[material.name]
 
-    #Set locations
+    # Set locations
     group_input.location = (-360.0, 80.0)
     group_output.location = (220.0, 80.0)
     curve_to_mesh.location = (-140.0, 80.0)
     curve_circle.location = (-360.0, -20.0)
     set_material.location = (40.0, 80.0)
 
-    #Set dimensions
+    # Set dimensions
     group_input.width, group_input.height = 140.0, 100.0
     group_output.width, group_output.height = 140.0, 100.0
     curve_to_mesh.width, curve_to_mesh.height = 140.0, 100.0
     curve_circle.width, curve_circle.height = 140.0, 100.0
     set_material.width, set_material.height = 140.0, 100.0
 
-    #initialize threadgeometrynodes links
-    #group_input.Geometry -> curve_to_mesh.Curve
+    # initialize threadgeometrynodes links
+    # group_input.Geometry -> curve_to_mesh.Curve
     threadgeometrynodes.links.new(group_input.outputs[0], curve_to_mesh.inputs[0])
-    #curve_circle.Curve -> curve_to_mesh.Profile Curve
+    # curve_circle.Curve -> curve_to_mesh.Profile Curve
     threadgeometrynodes.links.new(curve_circle.outputs[0], curve_to_mesh.inputs[1])
-    #set_material.Geometry -> group_output.Geometry
+    # set_material.Geometry -> group_output.Geometry
     threadgeometrynodes.links.new(set_material.outputs[0], group_output.inputs[0])
-    #curve_to_mesh.Mesh -> set_material.Geometry
+    # curve_to_mesh.Mesh -> set_material.Geometry
     threadgeometrynodes.links.new(curve_to_mesh.outputs[0], set_material.inputs[0])
     return threadgeometrynodes
 
@@ -211,24 +216,10 @@ def parse_embroidery_data(
     try:
         filename = path.basename(filepath)
         pattern = read(filepath)
-
-        # for thread in pattern.threadlist:
-        #     print(thread)
-        #     print('hexcolor: ', thread.hex_color())
-        #     print (thread.get_red() / 255.0, thread.get_green() / 255.0, thread.get_blue() / 255.0)
-        #     print(thread.get_opaque_color())
-        #     # print(dir(thread))
-
-
-        # write_png(pattern, "/home/javl/test.png", {})
-        # write_svg(pattern, "/home/javl/test.svg", {})
     except Exception as e:
         report_message = "Error reading file"
         report_type = "ERROR"
         return report_message, report_type
-
-    # print(f"Number of stitches: {len(pattern.stitches)}")
-    # print(f"Number of threads: {len(pattern.threadlist)}")
 
     if do_create_material:
         global thread_colors
@@ -240,9 +231,6 @@ def parse_embroidery_data(
             ]
             for thread in pattern.threadlist
         ]
-        # print(thread_colors)
-        # for index, thread in enumerate(pattern.threadlist):
-        #     print(index, thread)
 
     thread_index = 0  # start at the first thread
     sections = []  # list of sections, each section is a list of stitches
@@ -252,7 +240,6 @@ def parse_embroidery_data(
         x = float(stitch[0]) / scale
         y = -float(stitch[1]) / scale
         c = int(stitch[2])
-        # print(x, y, c)
 
         if c == STITCH:  # stitch and jump both draw a thread
             section["stitches"].append([x, y])
@@ -261,38 +248,37 @@ def parse_embroidery_data(
             if show_jumpwires:
                 section["stitches"].append([x, y])
             else:
-                print("skip jump")
-                sections.append(section)  # end our previous section
-                section = {
-                    "thread_index": thread_index,
-                    "stitches": [],
-                    "is_jump": True,
-                }
-            # sections.append(section)  # end our previous section
-            # section = {"thread_index": thread_index, "stitches": [], "is_jump": True}
-            # section["stitches"].append([x, y])
+                # Skip the jump wire
+                if section["stitches"]:
+                    # if our last section contained any stitches,
+                    # close the section and start a new one
+                    sections.append(section)
+                    section = {
+                        "thread_index": thread_index,
+                        "stitches": [],
+                    }
 
         elif c == COLOR_CHANGE:  # color change, move to the next thread
             sections.append(section)  # end our previous section
             thread_index += 1
-            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
+            section = {"thread_index": thread_index, "stitches": []}
             # break
 
         elif (
             c == TRIM
         ):  # trim moves to the next section without a line between the old and new position
             sections.append(section)  # end our previous section
-            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
+            section = {"thread_index": thread_index, "stitches": []}
             # section["stitches"].append([x, y])
 
         elif c == END:  # end of a section?
             sections.append(section)
-            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
+            section = {"thread_index": thread_index, "stitches": []}
 
         else:  # unhandled/unknown commands
             print("Unknown command: ", c)
             sections.append(section)  # end our previous section
-            section = {"thread_index": thread_index, "stitches": [], "is_jump": False}
+            section = {"thread_index": thread_index, "stitches": []}
             section["stitches"].append([x, y])
 
     if do_create_material:
@@ -315,8 +301,12 @@ def parse_embroidery_data(
         curve_obj.location.z = section_lift * index
         # We'll use a custom property to store the thread number in the curve object, this wil lbe used by the material
         curve_obj["thread_index"] = section["thread_index"]
-        if do_create_material and line_depth != "GEOMETRY_NODES":  # don't aply the material if we're using geometry nodes
-            curve_obj.data.materials.append( material )  # apply our material to the curve object
+        if (
+            do_create_material and line_depth != "GEOMETRY_NODES"
+        ):  # don't aply the material if we're using geometry nodes
+            curve_obj.data.materials.append(
+                material
+            )  # apply our material to the curve object
 
         curve_data = curve_obj.data  # Get the curve data
         curve_data.use_path = False
@@ -456,33 +446,8 @@ class ImportEmbroideryData(Operator, ImportHelper):
         return {"FINISHED"}
 
 
-# class EMBROIDERY_PT_import_options(bpy.types.Panel):
-#     bl_space_type = "FILE_BROWSER"
-#     bl_region_type = "TOOL_PROPS"
-#     bl_label = "Embroidery Import Options"
-#     bl_parent_id = "FILE_PT_operator"
-
-#     @classmethod
-#     def poll(cls, context):
-#         sfile = context.space_data
-#         operator = sfile.active_operator
-#         return (
-#             operator.bl_idname == "IMPORT_OT_embroidery"
-#             and operator.filepath.lower().endswith(".pes")
-#         )
-
-#     def draw(self, context):
-#         sfile = context.space_data
-#         operator = sfile.active_operator
-#         layout = self.layout
-#         # layout.prop(data=operator, property="csv_delimiter")
-#         # layout.prop(data=operator, property="csv_leading_lines_to_discard")
-#         # layout.prop(data=operator, property="csv_encoding")
-
-
 classes = [
     ImportEmbroideryData,
-    # EMBROIDERY_PT_import_options,
 ]
 
 
