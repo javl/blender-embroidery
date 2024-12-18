@@ -1,7 +1,7 @@
 ![Blender Embroidery Header image](images/blender_embroidery.png)
 # Blender Embroidery Import
 
-This is a Blender add-on that allows you to import files to be used with embroidery machines as curves with optional geometry (thickness) via a bevel or geometry nodes. It also detects and displays the color of your threads.
+This is a Blender extension that allows you to import files to be used with embroidery machines as curves with optional geometry (thickness) via a bevel or geometry nodes. It also detects and displays the color of your threads.
 
 ## License
 This addon is free to use (see [license](LICENSE)), including commercially, but if you find it useful please consider supporting my free and open source projects:
@@ -74,8 +74,8 @@ This value determines the thickness of the thread in the imported object. Not av
 
 
 ## Info on the material and color
-Each of the generated curves as a custom attribute called `thread_number` which corresponds to the color of the thread used in the embroidery file.
-These colors are all placed in a `Color ramp` in the material, which is then used to color the curves based on its `thread_number` attribute.
+Each of the generated curves as a custom attribute called `thread_index` which corresponds to the color of the thread used in the embroidery file.
+These colors are all placed in a `Color ramp` in the material, which is then used to color the curves based on its `thread_index` attribute.
 
 ![Material setup](images/material.png)
 
