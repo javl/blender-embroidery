@@ -8,6 +8,8 @@ This addon is free to use (see [license](LICENSE)), including commercially, but 
 
 [![GitHub Sponsor](https://img.shields.io/github/sponsors/javl?label=Sponsor&logo=GitHub)](https://github.com/sponsors/javl)
 
+[![BMC](https://www.buymeacoffee.com/assets/img/custom_images/white_img.png)](https://www.buymeacoffee.com/javl)
+
 ## Credit and supported file types
 This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library. You can find the whole list of supported file types in the pyembroidery [documentation](https://pypi.org/project/pyembroidery/). 
 
