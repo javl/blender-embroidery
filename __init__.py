@@ -137,7 +137,7 @@ def create_line_depth_geometry_nodes(filename, material):
     curve_to_mesh = threadgeometrynodes.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
     # Fill Caps
-    curve_to_mesh.inputs[2].default_value = False
+    curve_to_mesh.inputs[3].default_value = False
     # node Curve Circle
     curve_circle = threadgeometrynodes.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
