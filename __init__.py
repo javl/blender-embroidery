@@ -54,7 +54,7 @@ def create_material():
     math_node_divide.operation = "DIVIDE"
     math_node_divide.inputs[1].default_value = len(
         thread_colors
-    )  # Set the multiplier value
+    )  # Set the multiplier value, using its index as both inputs are called "Value" for this node
     math_node_divide.location = (-700, 0)
 
     math_node_add = nodes.new(type="ShaderNodeMath")
@@ -137,23 +137,23 @@ def create_line_depth_geometry_nodes(filename, material):
     curve_to_mesh = threadgeometrynodes.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
     # Fill Caps
-    curve_to_mesh.inputs[2].default_value = False
+    curve_to_mesh.inputs["Fill Caps"].default_value = False
     # node Curve Circle
     curve_circle = threadgeometrynodes.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
     curve_circle.mode = "RADIUS"
     # Resolution
-    curve_circle.inputs[0].default_value = 4
+    curve_circle.inputs["Resolution"].default_value = 4
     # Radius
-    curve_circle.inputs[4].default_value = 0.0002
+    curve_circle.inputs["Radius"].default_value = 0.0002
 
     # node Set Material
     set_material = threadgeometrynodes.nodes.new("GeometryNodeSetMaterial")
     set_material.name = "Set Material"
     # Selection
-    set_material.inputs[1].default_value = True
+    # set_material.inputs["Selection"].default_value = True
     if material.name in bpy.data.materials:
-        set_material.inputs[2].default_value = bpy.data.materials[material.name]
+        set_material.inputs["Material"].default_value = bpy.data.materials[material.name]
     # Set locations
     group_input.location = (-360.0, 80.0)
     group_output.location = (220.0, 80.0)
@@ -169,13 +169,13 @@ def create_line_depth_geometry_nodes(filename, material):
     set_material.width, set_material.height = 140.0, 100.0
     # initialize threadgeometrynodes links
     # group_input.Geometry -> curve_to_mesh.Curve
-    threadgeometrynodes.links.new(group_input.outputs[0], curve_to_mesh.inputs[0])
+    threadgeometrynodes.links.new(group_input.outputs["Geometry"], curve_to_mesh.inputs["Curve"])
     # curve_circle.Curve -> curve_to_mesh.Profile Curve
-    threadgeometrynodes.links.new(curve_circle.outputs[0], curve_to_mesh.inputs[1])
+    threadgeometrynodes.links.new(curve_circle.outputs["Curve"], curve_to_mesh.inputs["Profile Curve"])
     # set_material.Geometry -> group_output.Geometry
-    threadgeometrynodes.links.new(set_material.outputs[0], group_output.inputs[0])
+    threadgeometrynodes.links.new(set_material.outputs["Geometry"], group_output.inputs["Geometry"])
     # curve_to_mesh.Mesh -> set_material.Geometry
-    threadgeometrynodes.links.new(curve_to_mesh.outputs[0], set_material.inputs[0])
+    threadgeometrynodes.links.new(curve_to_mesh.outputs["Mesh"], set_material.inputs["Geometry"])
     return threadgeometrynodes
 
 
