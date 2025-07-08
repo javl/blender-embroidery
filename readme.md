@@ -1,5 +1,5 @@
 ![Blender Embroidery Header image](images/blender_embroidery.png)
-# Blender Embroidery Import
+# Blender Embroidery Import <!-- omit from toc -->
 
 This is a Blender extension that allows you to import files to be used with embroidery machines as curves with optional geometry (thickness) via a bevel or geometry nodes. It also detects and displays the color of your threads.
 
@@ -10,27 +10,36 @@ This addon is free to use (see [license](LICENSE)), including commercially, but 
 
 [![BMC](https://www.buymeacoffee.com/assets/img/custom_images/white_img.png)](https://www.buymeacoffee.com/javl)
 
-## Credit and supported file types
-This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library. You can find the whole list of supported file types in the pyembroidery [documentation](https://pypi.org/project/pyembroidery/). 
+## Pyembroidery and supported file types
+This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library. You can find the whole list of supported file types in the pyembroidery [documentation](https://pypi.org/project/pyembroidery/).
 
 Personally I've only tested it with `.pes` files which I've created using the [Ink/Stitch addon](https://inkstitch.org/) for [Inkscape](https://inkscape.org/).
 
+## Table of contents <!-- omit from toc -->
+- [License](#license)
+- [Pyembroidery and supported file types](#pyembroidery-and-supported-file-types)
+- [Example file](#example-file)
+- [Installation](#installation)
+- [Import settings](#import-settings)
+  - [Import jump wires](#import-jump-wires)
+  - [Create material](#create-material)
+  - [Create collection](#create-collection)
+  - [Thickness type](#thickness-type)
+    - [No thickness (curve only)](#no-thickness-curve-only)
+    - [Using geometry nodes](#using-geometry-nodes)
+    - [Using bevel](#using-bevel)
+  - [Thread thickness](#thread-thickness)
+- [Info on the material and color](#info-on-the-material-and-color)
+- [Changelog](#changelog)
+  - [0.9.5](#095)
+  - [0.9.4](#094)
+  - [0.9.3](#093)
+  - [0.9.2](#092)
+  - [0.9.1](#091)
+
+
 ## Example file
 The pattern shown at the top of this page can be found here: [example.pes](example.pes). The original `.svg` file is [here](example.svg), open it in Inkscape with the Ink/Stitch addon installed.
-
-## Table of contents
-- [Blender Embroidery Import](#blender-embroidery-import)
-  - [Installation](#installation)
-  - [Import settings](#import-settings)
-    - [Import jump wires](#import-jump-wires)
-    - [Create material](#create-material)
-    - [Create collection](#create-collection)
-    - [Thickness type](#thickness-type)
-      - [No thickness (curve only)](#no-thickness-curve-only)
-      - [Using geometry nodes](#using-geometry-nodes)
-      - [Using bevel](#using-bevel)
-    - [Thread thickness](#thread-thickness)
-  - [Info on the material and color](#info-on-the-material-and-color)
 
 ## Installation
 Download the [latest release](https://github.com/javl/blender-embroidery/releases/latest) as a `.zip` file and add it via Blender's add-on manager.
@@ -80,3 +89,31 @@ These colors are all placed in a `Color ramp` in the material, which is then use
 ![Material setup](images/material.png)
 
 ![Thread number on curve](images/thread_number.png)
+
+## Changelog
+
+### 0.9.5
+Fixes compatibility issue with Blender 4.5.
+
+---
+
+### 0.9.4
+Two speed improvements:
+
+* Fixes error that caused large amounts of Geometry Node elements to be created instead of reusing existing one.
+* Removes some internal log commands which weren't visible to the user, but would slow down processing.
+
+---
+
+### 0.9.3
+Internal update: changed bl_idname from "import.embroidery" to "import_scene.embroidery"
+
+---
+
+### 0.9.2
+Removed the documentation images from the .zip
+
+---
+
+### 0.9.1
+Prevent creating a geometry node for every curve instead of one per import
