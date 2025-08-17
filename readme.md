@@ -31,6 +31,7 @@ Personally I've only tested it with `.pes` files which I've created using the [I
   - [Thread thickness](#thread-thickness)
 - [Info on the material and color](#info-on-the-material-and-color)
 - [Changelog](#changelog)
+  - [0.9.6](#096)
   - [0.9.5](#095)
   - [0.9.4](#094)
   - [0.9.3](#093)
@@ -91,6 +92,11 @@ These colors are all placed in a `Color ramp` in the material, which is then use
 ![Thread number on curve](images/thread_number.png)
 
 ## Changelog
+
+### 0.9.6
+Internal update, fixing Blender build command
+
+---
 
 ### 0.9.5
 Fixes compatibility issue with Blender 4.5.
