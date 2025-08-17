@@ -1,2 +1,10 @@
 venv/
 *.pyc
+*.zip
+*.pes
+!example.pes
+*.blend
+*.blend1
+*.py
+!__init__.py
+*.txt
