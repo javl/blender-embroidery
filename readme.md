@@ -6,9 +6,7 @@ This is a Blender extension that allows you to import files to be used with embr
 ## License
 This addon is free to use (see [license](LICENSE)), including commercially, but if you find it useful please consider supporting my free and open source projects:
 
-[![GitHub Sponsor](https://img.shields.io/github/sponsors/javl?label=Sponsor&logo=GitHub)](https://github.com/sponsors/javl)
-
-[![BMC](https://www.buymeacoffee.com/assets/img/custom_images/white_img.png)](https://www.buymeacoffee.com/javl)
+[![GitHub Sponsor](https://img.shields.io/badge/_-sponsor_on_Github-blue?logo=github)](https://github.com/sponsors/javl) [![BMC](https://img.shields.io/badge/Buy_Me_a_Coffee-orange?logo=buymeacoffee)](https://www.buymeacoffee.com/javl)
 
 ## Pyembroidery and supported file types
 This addon relies heavily on [pyembroidery](https://pypi.org/project/pyembroidery/) and should support the same file formats as that library. You can find the whole list of supported file types in the pyembroidery [documentation](https://pypi.org/project/pyembroidery/).
